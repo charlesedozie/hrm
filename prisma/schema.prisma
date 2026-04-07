@@ -1,0 +1,3819 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id               String       @id @default(uuid())
+  username         String       @unique
+  password         String
+  role             Role         @default(USER)
+  status           UserStatus   @default(ACTIVE)
+  employeeId       String?      @unique
+  employee         Employee?    @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  beneficiaryId    String?      @unique
+  beneficiary      Beneficiary? @relation(fields: [beneficiaryId], references: [id], onDelete: SetNull)
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  userActivity       UserActivity[]
+  beneficiaryRequest BeneficiaryRequest[]
+  submittedBy        BeneficiaryFeedback[] @relation("SubmittedBy")
+  requestSubmittedBy BeneficiaryRequest[]  @relation("RequestSubmittedBy")
+  assignedTo         BeneficiaryFeedback[] @relation("AssignedTo")
+  userSettings       UserSettings[]
+  roles              UserRoleAssignment[] // ✅ multiple roles
+  sentMessages       Message[]             @relation("SentMessages")
+  receivedMessages   Message[]             @relation("ReceivedMessages")
+
+  interventionBatch             InterventionBatch[]            @relation("InterventionBatchCreatedBy")
+  createdUsers                  User[]                         @relation("UserCreatedBy")
+  createdRoleModulePermission   RoleModulePermission[]         @relation("RoleModulePermissionCreatedBy")
+  createdEmployee               Employee[]                     @relation("EmployeeCreatedBy")
+  createdSystemCheck            SystemCheck[]                  @relation("SystemCheckCreatedBy")
+  createdDonor                  Donor[]                        @relation("DonorCreatedBy")
+  createdProgram                Program[]                      @relation("ProgramCreatedBy")
+  createdProjectDonor           ProjectDonor[]                 @relation("ProjectDonorCreatedBy")
+  createdProjectEmployee        ProjectEmployee[]              @relation("ProjectEmployeeCreatedBy")
+  createdProject                Project[]                      @relation("ProjectCreatedBy")
+  createdNigeriaState           NigeriaState[]                 @relation("NigeriaStateCreatedBy")
+  createdEmergencyContact       EmergencyContact[]             @relation("EmergencyContactCreatedBy")
+  createdContactInfo            ContactInfo[]                  @relation("ContactInfoCreatedBy")
+  createdEmploymentHistory      EmploymentHistory[]            @relation("EmploymentHistoryCreatedBy")
+  createdGender                 Gender[]                       @relation("GenderCreatedBy")
+  createdPersonalInfo           PersonalInfo[]                 @relation("PersonalInfoCreatedBy")
+  createdVacancy                Vacancy[]                      @relation("VacancyCreatedBy")
+  createdMarritalStatus         MarritalStatus[]               @relation("MarritalStatusCreatedBy")
+  createdShift                  Shift[]                        @relation("ShiftCreatedBy")
+  createdShiftEmployee          ShiftEmployee[]                @relation("ShiftEmployeeCreatedBy")
+  createdAttendance             Attendance[]                   @relation("AttendanceCreatedBy")
+  createdLeaveRequest           LeaveRequest[]                 @relation("LeaveRequestCreatedBy")
+  createdLeaveType              LeaveType[]                    @relation("LeaveTypeCreatedBy")
+  createdInterventionCategory   InterventionCategory[]         @relation("InterventionCategoryCreatedBy")
+  createdTraining               Training[]                     @relation("TrainingCreatedBy")
+  createdTrainingEnrollment     TrainingEnrollment[]           @relation("TrainingEnrollmentCreatedBy")
+  createdEmployeeDegree         EmployeeDegree[]               @relation("EmployeeDegreeCreatedBy")
+  createdEmployeeCertificate    EmployeeCertificate[]          @relation("EmployeeCertificateCreatedBy")
+  createdOrganization           Organization[]                 @relation("OrganizationCreatedBy")
+  createdCase                   Case[]                         @relation("CaseCreatedBy")
+  createdIntervention           Intervention[]                 @relation("InterventionCreatedBy")
+  createdCaseAssessment         CaseAssessment[]               @relation("CaseAssessmentCreatedBy")
+  createdService                Service[]                      @relation("ServiceCreatedBy")
+  createdIncident               Incident[]                     @relation("IncidentCreatedBy")
+  createdCaseNote               CaseNote[]                     @relation("CaseNoteCreatedBy")
+  createdOrgDocs                OrgDocs[]                      @relation("OrgDocsCreatedBy")
+  createdOfficeLocation         OfficeLocation[]               @relation("OfficeLocationCreatedBy")
+  createdOfficePosition         OfficePosition[]               @relation("OfficePositionCreatedBy")
+  reportedDisciplinaryCase      DisciplinaryCase[]             @relation("DisciplinaryReportedBy")
+  disciplinaryInvestigator      DisciplinaryCase[]             @relation("DisciplinaryInvestigator")
+  createdDisciplinaryCreatedBy  DisciplinaryCase[]             @relation("DisciplinaryCreatedBy")
+  createdGrievance              Grievance[]                    @relation("GrievanceCreatedBy")
+  createdServiceType            ServiceType[]                  @relation("ServiceTypeCreatedBy")
+  createdAssetCategory          AssetCategory[]                @relation("AssetCategoryCreatedBy")
+  createdAsset                  Asset[]                        @relation("AssetCreatedBy")
+  createdCheckedOutBy           AssetAssignment[]              @relation("CheckedOutBy")
+  createdReturnedBy             AssetAssignment[]              @relation("ReturnedBy")
+  createdAssetAssignment        AssetAssignment[]              @relation("AssetAssignmentCreatedBy")
+  createdAssetDepreciation      AssetDepreciation[]            @relation("AssetDepreciationCreatedBy")
+  createdAssetDisposal          AssetDisposal[]                @relation("AssetDisposalCreatedBy")
+  createdAssetProjectAllocation AssetProjectAllocation[]       @relation("AssetProjectAllocationCreatedBy")
+  createdPayrollPeriod          PayrollPeriod[]                @relation("PayrollPeriodCreatedBy")
+  createdPayroll                Payroll[]                      @relation("PayrollCreatedBy")
+  createdPayrollEarning         PayrollEarning[]               @relation("PayrollEarningCreatedBy")
+  createdPayrollDeduction       PayrollDeduction[]             @relation("PayrollDeductionCreatedBy")
+  createdPayrollAllocation      PayrollAllocation[]            @relation("PayrollAllocationCreatedBy")
+  createdPayrollAuditLog        PayrollAuditLog[]              @relation("PayrollAuditLogCreatedBy")
+  createdPayrollProfile         PayrollProfile[]               @relation("PayrollProfileCreatedBy")
+  createdAttendanceSummary      AttendanceSummary[]            @relation("AttendanceSummaryCreatedBy")
+  createdApprovalWorkflow       ApprovalWorkflow[]             @relation("ApprovalWorkflowCreatedBy")
+  createdApprovalLevel          ApprovalLevel[]                @relation("ApprovalLevelCreatedBy")
+  createdApprovalRequest        ApprovalRequest[]              @relation("ApprovalRequestCreatedBy")
+  createdUserRole               UserRole[]                     @relation("UserRoleCreatedBy")
+  createdReligion               Religion[]                     @relation("ReligionCreatedBy")
+  createdRelationShip           RelationShip[]                 @relation("RelationShipCreatedBy")
+  createdDepartment             Department[]                   @relation("DepartmentCreatedBy")
+  createdJobLevel               JobLevel[]                     @relation("JobLevelCreatedBy")
+  createdPayrollDeductionOther  PayrollDeductionOther[]        @relation("PayrollDeductionOtherCreatedBy")
+  createdPayrollEarningOther    PayrollEarningOther[]          @relation("PayrollEarningOtherCreatedBy")
+  createdPayrollEmpBank         PayrollEmpBank[]               @relation("PayrollEmpBankCreatedBy")
+  createdLeaveBalance           LeaveBalance[]                 @relation("LeaveBalanceCreatedBy")
+  createdHolidayCalendar        HolidayCalendar[]              @relation("HolidayCalendarCreatedBy")
+  createdProjectActivity        ProjectActivity[]              @relation("ProjectActivityCreatedBy")
+  createdChangeRequest          ProjectActivityChangeRequest[] @relation("ChangeRequestCreatedBy")
+  createdMasterIndicator        MasterIndicator[]              @relation("MasterIndicatorCreatedBy")
+  createdMEFieldMonitor         MEFieldMonitor[]               @relation("MEFieldMonitorCreatedBy")
+  createdEquipmentRequest       EquipmentRequest[]             @relation("EquipmentRequestCreatedBy")
+  createdEmployeeRequest        EmployeeRequest[]              @relation("EmployeeRequestCreatedBy")
+  createdOfficeRole             OfficeRole[]                   @relation("OfficeRoleCreatedBy")
+  createdUnit                   Unit[]                         @relation("UnitCreatedBy")
+  createdWorkSchedule           WorkSchedule[]                 @relation("WorkScheduleCreatedBy")
+  createdAttendanceStatus       AttendanceStatus[]             @relation("AttendanceStatusCreatedBy")
+  createdTimesheet              Timesheet[]                    @relation("TimesheetCreatedBy")
+  approvalRequestInitiateddBy   ApprovalRequest[]              @relation("ApprovalRequestInitiateddBy")
+  createdNgpayeBand             NgpayeBand[]                   @relation("NgpayeBandCreatedBy")
+  createdSalaryStructure        SalaryStructure[]              @relation("SalaryStructureCreatedBy")
+  createdCurrency               Currency[]                     @relation("CurrencyCreatedBy")
+
+  // relations deleted items 
+  deletedUsers                  User[]                         @relation("UserDeletedBy")
+  deletedNgpayeBand             NgpayeBand[]                   @relation("NgpayeBandDeletedBy")
+  deletedSalaryStructure        SalaryStructure[]              @relation("SalaryStructureDeletedBy")
+  deletedAttendanceStatus       AttendanceStatus[]             @relation("AttendanceStatusDeletedBy")
+  deletedTimesheet              Timesheet[]                    @relation("TimesheetDeletedBy")
+  deletedWorkSchedule           WorkSchedule[]                 @relation("WorkScheduleDeletedBy")
+  deletedGrievance              Grievance[]                    @relation("GrievanceDeletedBy")
+  deletedUnit                   Unit[]                         @relation("UnitDeletedBy")
+  deletedOfficeRole             OfficeRole[]                   @relation("OfficeRoleDeletedBy")
+  deletedEmployeeRequest        EmployeeRequest[]              @relation("EmployeeRequestDeletedBy")
+  deletedEquipmentRequest       EquipmentRequest[]             @relation("EquipmentRequestDeletedBy")
+  deletedMasterIndicator        MasterIndicator[]              @relation("MasterIndicatorDeletedBy")
+  deletedMEFieldMonitor         MEFieldMonitor[]               @relation("MEFieldMonitorDeletedBy")
+  deletedChangeRequest          ProjectActivityChangeRequest[] @relation("ChangeRequestDeletedBy")
+  deletedProjectActivity        ProjectActivity[]              @relation("ProjectActivityDeletedBy")
+  deletedHolidayCalendar        HolidayCalendar[]              @relation("HolidayCalendarDeletedBy")
+  deletedLeaveBalance           LeaveBalance[]                 @relation("LeaveBalanceDeletedBy")
+  deletedPayrollEmpBank         PayrollEmpBank[]               @relation("PayrollEmpBankDeletedBy")
+  deletedPayrollDeductionOther  PayrollDeductionOther[]        @relation("PayrollDeductionOtherDeletedBy")
+  deletedPayrollEarningOther    PayrollEarningOther[]          @relation("PayrollEarningOtherDeletedBy")
+  deletedJobLevel               JobLevel[]                     @relation("JobLevelDeletedBy")
+  deletedDepartment             Department[]                   @relation("DepartmentDeletedBy")
+  deletedRelationShip           RelationShip[]                 @relation("RelationShipDeletedBy")
+  deletedReligion               Religion[]                     @relation("ReligionDeletedBy")
+  deletedUserRole               UserRole[]                     @relation("UserRoleDeletedBy")
+  deletedApprovalRequest        ApprovalRequest[]              @relation("ApprovalRequestDeletedBy")
+  deletedApprovalLevel          ApprovalLevel[]                @relation("ApprovalLevelDeletedBy")
+  deletedApprovalWorkflow       ApprovalWorkflow[]             @relation("ApprovalWorkflowDeletedBy")
+  deletedAttendanceSummary      AttendanceSummary[]            @relation("AttendanceSummaryDeletedBy")
+  deletedPayrollAuditLog        PayrollAuditLog[]              @relation("PayrollAuditLogDeletedBy")
+  deletedPayrollAllocation      PayrollAllocation[]            @relation("PayrollAllocationDeletedBy")
+  deletedPayrollDeduction       PayrollDeduction[]             @relation("PayrollDeductionDeletedBy")
+  deletedPayrollEarning         PayrollEarning[]               @relation("PayrollEarningDeletedBy")
+  deletedPayroll                Payroll[]                      @relation("PayrollDeletedBy")
+  deletedPayrollPeriod          PayrollPeriod[]                @relation("PayrollPeriodDeletedBy")
+  deletedAssetDepreciation      AssetDepreciation[]            @relation("AssetDepreciationDeletedBy")
+  deletedAssetDisposal          AssetDisposal[]                @relation("AssetDisposalDeletedBy")
+  deletedAssetProjectAllocation AssetProjectAllocation[]       @relation("AssetProjectAllocationDeletedBy")
+  deletedAssetAssignment        AssetAssignment[]              @relation("AssetAssignmentDeletedBy")
+  deletedAsset                  Asset[]                        @relation("AssetDeletedBy")
+  deletedAssetCategory          AssetCategory[]                @relation("AssetCategoryDeletedBy")
+  deletedServiceType            ServiceType[]                  @relation("ServiceTypeDeletedBy")
+  deletedIncident               Incident[]                     @relation("IncidentDeletedBy")
+  deletedOfficePosition         OfficePosition[]               @relation("OfficePositionDeletedBy")
+  deletedOfficeLocation         OfficeLocation[]               @relation("OfficeLocationDeletedBy")
+  disciplinaryDeletedBy         DisciplinaryCase[]             @relation("DisciplinaryDeletedBy")
+  deletedOrgDocs                OrgDocs[]                      @relation("OrgDocsDeletedBy")
+  deletedCaseNote               CaseNote[]                     @relation("CaseNoteDeletedBy")
+  deletedCaseAssessment         CaseAssessment[]               @relation("CaseAssessmentDeletedBy")
+  deletedService                Service[]                      @relation("ServiceDeletedBy")
+  deletedEmployee               Employee[]                     @relation("EmployeeDeletedBy")
+  deletedCase                   Case[]                         @relation("CaseDeletedBy")
+  deletedOrganization           Organization[]                 @relation("OrganizationDeletedBy")
+  deletedEmployeeCertificate    EmployeeCertificate[]          @relation("EmployeeCertificateDeletedBy")
+  deletedEmployeeDegree         EmployeeDegree[]               @relation("EmployeeDegreeDeletedBy")
+  deletedTrainingEnrollment     TrainingEnrollment[]           @relation("TrainingEnrollmentDeletedBy")
+  deletedTraining               Training[]                     @relation("TrainingDeletedBy")
+  deletedBeneficiary            Beneficiary[]                  @relation("BeneficiaryDeletedBy")
+  deletedInterventionCategory   InterventionCategory[]         @relation("InterventionCategoryDeletedBy")
+  deletedLeaveType              LeaveType[]                    @relation("LeaveTypeDeletedBy")
+  deletedLeaveRequest           LeaveRequest[]                 @relation("LeaveRequestDeletedBy")
+  deletedAttendance             Attendance[]                   @relation("AttendanceDeletedBy")
+  deletedShift                  Shift[]                        @relation("ShiftDeletedBy")
+  deletedShiftEmployee          ShiftEmployee[]                @relation("ShiftEmployeeDeletedBy")
+  deletedDonor                  Donor[]                        @relation("DonorDeletedBy")
+  deletedProgram                Program[]                      @relation("ProgramDeletedBy")
+  deletedProjectDonor           ProjectDonor[]                 @relation("ProjectDonorDeletedBy")
+  deletedProjectEmployee        ProjectEmployee[]              @relation("ProjectEmployeeDeletedBy")
+  deletedProject                Project[]                      @relation("ProjectDeletedBy")
+  deletedEmergencyContact       EmergencyContact[]             @relation("EmergencyContactDeletedBy")
+  deletedContactInfo            ContactInfo[]                  @relation("ContactInfoDeletedBy")
+  deletedEmploymentHistory      EmploymentHistory[]            @relation("EmploymentHistoryDeletedBy")
+  deletedPersonalInfo           PersonalInfo[]                 @relation("PersonalInfoDeletedBy")
+  deletedGender                 Gender[]                       @relation("GenderDeletedBy")
+  deletedVacancy                Vacancy[]                      @relation("VacancyDeletedBy")
+  deletedApplicationform        Applicationform[]              @relation("ApplicationformDeletedBy")
+  deletedPayrollProfile         PayrollProfile[]               @relation("PayrollProfileDeletedBy")
+  deletedMarritalStatus         MarritalStatus[]               @relation("MarritalStatusDeletedBy")
+
+  // Soft delete
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("UserDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy           User?                 @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById         String?
+  BeneficiaryFollowUp BeneficiaryFollowUp[]
+}
+
+model Grievance {
+  id          String          @id @default(uuid())
+  subject     String
+  description String
+  type        GrievanceType   @default(GRIEVANCE)
+  status      GrievanceStatus @default(SUBMITTED)
+  isAnonymous Boolean         @default(false)
+
+  beneficiaryId String?
+  beneficiary   Beneficiary? @relation(fields: [beneficiaryId], references: [id])
+
+  submittedAt DateTime  @default(now())
+  resolvedAt  DateTime?
+  employeeId  String?
+  employee    Employee? @relation("EmployeeGrievances", fields: [employeeId], references: [id])
+
+  assignedToId String?
+  assignedTo   Employee? @relation("GrievanceAssignedTo", fields: [assignedToId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  caseId    String?
+  case      Case?    @relation(fields: [caseId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("GrievanceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("GrievanceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model BeneficiaryRequest {
+  id            String      @id @default(uuid())
+  beneficiaryId String
+  beneficiary   Beneficiary @relation(fields: [beneficiaryId], references: [id])
+  requestType   RequestType
+  title         String
+  description   String?
+
+  submittedById   String?
+  submittedBy     User?         @relation("RequestSubmittedBy", fields: [submittedById], references: [id])
+  amountRequested Float?
+  amountApproved  Float?
+  status          RequestStatus @default(PENDING)
+  priority        Priority      @default(MEDIUM)
+
+  assignedToId    String?
+  assignedTo      User?     @relation(fields: [assignedToId], references: [id])
+  approvalDate    DateTime?
+  rejectionReason String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([beneficiaryId])
+  @@index([status])
+  @@index([requestType])
+}
+
+model UserRoleAssignment {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      UserRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId]) // prevent duplicates
+}
+
+model UserRole {
+  id             String                 @id @default(uuid())
+  name           String                 @unique
+  code           String?
+  users          UserRoleAssignment[]
+  approvalLevels ApprovalLevel[]
+  permissions    RoleModulePermission[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("UserRoleDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("UserRoleCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Module {
+  id          String                 @id @default(uuid())
+  name        String                 @unique // e.g. "BENEFICIARY", "HR", "INVENTORY"
+  code        String                 @unique // e.g. "BENEFICIARY", "HR", "INVENTORY"
+  description String?
+  permissions RoleModulePermission[]
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+}
+
+model RoleModulePermission {
+  id     String   @id @default(uuid())
+  role   UserRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId String
+
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  moduleId String
+
+  canCreate Boolean @default(false)
+  canRead   Boolean @default(true)
+  canUpdate Boolean @default(false)
+  canDelete Boolean @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   User?    @relation("RoleModulePermissionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([roleId, moduleId]) // Prevent duplicates
+}
+
+model EquipmentRequest {
+  id              String        @id @default(uuid())
+  assetCategory   AssetCategory @relation(fields: [assetCategoryId], references: [id], onDelete: Cascade)
+  assetCategoryId String
+
+  // Optional relations – connect whichever makes sense
+  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  employeeId String?
+
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId String?
+  // Add more: departmentId, organizationId, etc. if needed
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("EquipmentRequestDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("EquipmentRequestCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+// stores user roles for access management with permission
+
+model Employee {
+  id              String           @id @default(uuid())
+  empId           String?          @unique
+  status          EmploymentStatus @default(ACTIVE)
+  hireDate        DateTime
+  recordStatus    RecordStatus     @default(PENDING_APPROVAL)
+  terminationDate DateTime?
+  url             String?
+  file            String?
+  originalName    String?
+  avatar          String?
+  genderId        String?
+  gender          Gender?          @relation(fields: [genderId], references: [id])
+
+  fname String
+  lname String
+  mname String?
+
+  feedbackReviewerEmpBank   PerformanceFeedback[]       @relation("FeedbackReviewer")
+  employeeFeedBankBank      PerformanceFeedback[]       @relation("FeedbackEmployee")
+  employeeAppraisal         PerformanceAppraisal[]      @relation("EmployeeAppraisal")
+  managerAppraisal          PerformanceAppraisal[]      @relation("ManagerAppraisal")
+  payrollEmpBank            PayrollEmpBank[]
+  performanceGoal           PerformanceGoal[]
+  employeeRequestAssignedTo EmployeeRequest[]           @relation("EmployeeRequestAssignedTo")
+  equipmentRequest          EquipmentRequest[]
+  leaveBalance              LeaveBalance[]
+  beneficiary               Beneficiary[]
+  promotionRequest          PromotionRequest[]
+  employeeAttendanceProfile EmployeeAttendanceProfile[]
+  orgDocs                   OrgDocs[]
+  beneficiaryAttendance     BeneficiaryAttendance[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // New Relations
+  projects              ProjectEmployee[] //one-many
+  contactInfo           ContactInfo[]
+  attendanceSummary     AttendanceSummary[]
+  attendance            Attendance[]
+  payroll               Payroll[]
+  beneficiaryFieldVisit BeneficiaryFieldVisit[]
+  vacancy               Vacancy[]               @relation("VacancyAssignedTo")
+  grievanceEmployee     Grievance[]             @relation("EmployeeGrievances")
+  grievanceAssigned     Grievance[]             @relation("GrievanceAssignedTo")
+  disposedAssets        AssetDisposal[]         @relation("AssetDisposedBy")
+
+  cases              Case[]
+  caseNotes          CaseNote[]
+  createdAssessments CaseAssessment[]
+
+  leaveRequest              LeaveRequest[]
+  personalInfo              PersonalInfo[]
+  trainingEnrollment        TrainingEnrollment[]
+  employmentSupervisor      EmploymentHistory[]  @relation("EmploymentSupervisor")
+  employeeEmploymentHistory EmploymentHistory[]  @relation("EmployeeEmploymentHistory")
+  disciplinaryCase          DisciplinaryCase[]   @relation("EmployeeDisciplinaryCases")
+  emergencyContact          EmergencyContact[]
+  employeesShift            ShiftEmployee[]
+  user                      User? // one-one
+  payrollProfile            PayrollProfile?
+
+  // ── Current reporting line (denormalized / maintained via trigger or app logic) ──
+  currentSupervisorId String?
+  currentSupervisor   Employee?  @relation("CurrentReportsTo", fields: [currentSupervisorId], references: [id])
+  directReports       Employee[] @relation("CurrentReportsTo")
+
+  // ── New skill fields ────────────────────────────────────────
+  technicalSkills   String? // "React, TypeScript, Node.js, Docker, AWS"
+  softSkills        String? // "Leadership, Communication, Teamwork, Problem Solving"
+  itSkills          String? // "Excel, Power BI, SQL, Python scripting, Linux"
+  projectActivity   ProjectActivity? @relation(fields: [projectActivityId], references: [id], onDelete: SetNull)
+  projectActivityId String?
+  // Soft delete + audit
+  deletedAt         DateTime?
+  deletedBy         User?            @relation("EmployeeDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById       String?
+
+  // creator  
+  createdBy           User?                 @relation("EmployeeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById         String?
+  employeeDegree      EmployeeDegree[]
+  employeeCertificate EmployeeCertificate[]
+  assetAssignment     AssetAssignment[]
+  Loan                Loan[]
+  Overtime            Overtime[]
+}
+
+model BeneficiaryAttendance {
+  id            String      @id @default(uuid())
+  beneficiaryId String
+  beneficiary   Beneficiary @relation(fields: [beneficiaryId], references: [id], onDelete: Cascade)
+
+  interventionBatchId String
+  interventionBatch   InterventionBatch @relation(fields: [interventionBatchId], references: [id], onDelete: Cascade)
+
+  statusId String?
+  status   AttendanceStatus? @relation(fields: [statusId], references: [id])
+
+  notes        String?
+  recordedById String?
+  recordedBy   Employee? @relation(fields: [recordedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([statusId])
+}
+
+model BeneficiaryFieldVisit {
+  id            String      @id @default(uuid())
+  beneficiaryId String
+  beneficiary   Beneficiary @relation(fields: [beneficiaryId], references: [id])
+
+  visitedById String?
+  visitedBy   Employee? @relation(fields: [visitedById], references: [id])
+
+  visitDate DateTime
+  visitType VisitType
+
+  purpose      String?
+  observations String?
+  assessment   String?
+
+  locationLat Float?
+  locationLng Float?
+
+  status        VisitStatus           @default(COMPLETED)
+  nextVisitDate DateTime?
+  followUps     BeneficiaryFollowUp[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([beneficiaryId])
+  @@index([visitDate])
+}
+
+model PerformanceDevelopmentPlan {
+  id          String               @id @default(uuid())
+  employeeId  String
+  appraisalId String
+  strengths   String?
+  weaknesses  String?
+  actionPlan  String?
+  createdAt   DateTime             @default(now())
+  appraisal   PerformanceAppraisal @relation(fields: [appraisalId], references: [id])
+}
+
+model PerformanceRatingScale {
+  id    String @id @default(uuid())
+  name  String
+  score Float
+}
+
+model PerformanceFeedback {
+  id         String @id @default(uuid())
+  employeeId String
+  reviewerId String
+
+  cycleId String
+
+  comment String
+  rating  Float?
+
+  createdAt DateTime @default(now())
+
+  employee Employee @relation("FeedbackEmployee", fields: [employeeId], references: [id])
+  reviewer Employee @relation("FeedbackReviewer", fields: [reviewerId], references: [id])
+}
+
+model PerformanceAppraisalRating {
+  id          String  @id @default(uuid())
+  appraisalId String
+  goalId      String
+  score       Float
+  comment     String?
+
+  appraisal PerformanceAppraisal @relation(fields: [appraisalId], references: [id])
+  goal      PerformanceGoal      @relation(fields: [goalId], references: [id])
+
+  @@unique([appraisalId, goalId])
+}
+
+model PerformanceGoal {
+  id           String       @id @default(uuid())
+  employeeId   String
+  cycleId      String
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  title         String
+  description   String?
+  weight        Float
+  targetValue   Float?
+  achievedValue Float?
+
+  progress Float? // percentage
+
+  employee Employee         @relation(fields: [employeeId], references: [id])
+  cycle    PerformanceCycle @relation(fields: [cycleId], references: [id])
+
+  ratings   PerformanceAppraisalRating[]
+  createdAt DateTime                     @default(now())
+}
+
+model PerformanceCycle {
+  id           String       @id @default(uuid())
+  name         String
+  startDate    DateTime
+  endDate      DateTime
+  status       CycleStatus
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  goals      PerformanceGoal[]
+  appraisals PerformanceAppraisal[]
+}
+
+model PerformanceAppraisal {
+  id         String @id @default(uuid())
+  employeeId String
+  managerId  String
+  cycleId    String
+
+  selfComment    String?
+  managerComment String?
+  hrComment      String?
+
+  finalScore Float?
+  status     AppraisalStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  employee Employee @relation("EmployeeAppraisal", fields: [employeeId], references: [id])
+  manager  Employee @relation("ManagerAppraisal", fields: [managerId], references: [id])
+
+  cycle                      PerformanceCycle             @relation(fields: [cycleId], references: [id])
+  ratings                    PerformanceAppraisalRating[]
+  performanceDevelopmentPlan PerformanceDevelopmentPlan[]
+}
+
+model UserSettings {
+  id String @id @default(uuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Dashboard
+  defaultLandingPage String? // dashboard, employees, payroll
+  dashboardLayout    String? // compact, expanded
+
+  // Data View
+  defaultDataView String? // table, grid
+  pageSize        Int? // 10, 25, 50
+
+  // Notifications
+  emailNotifications    Boolean @default(true)
+  workflowNotifications Boolean @default(true)
+  payrollNotifications  Boolean @default(true)
+
+  // Localization
+  timezone   String? @default("Africa/Lagos")
+  dateFormat String? @default("DD/MM/YYYY")
+  currency   String? @default("NGN")
+
+  // Appearance
+  theme             String? @default("system") // light, dark, system
+  compactMode       Boolean @default(false)
+  preferredLanguage String? @default("en")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EmployeeRequest {
+  id              String         @id @default(uuid())
+  assetCategoryId String?
+  assetCategory   AssetCategory? @relation(fields: [assetCategoryId], references: [id], onDelete: Cascade)
+  requestType     RequestType
+  approvalStatus  ApprovalStatus @default(PENDING)
+
+  project      Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId    String?
+  // Add more: departmentId, organizationId, etc. if needed
+  notes        String?
+  subject      String?
+  isAnonymous  Boolean?  @default(false)
+  resolvedAt   DateTime?
+  assignedToId String?
+  assignedTo   Employee? @relation("EmployeeRequestAssignedTo", fields: [assignedToId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("EmployeeRequestDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("EmployeeRequestCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Currency {
+  id           String       @id @default(uuid())
+  code         String       @unique // NGN, USD, EUR
+  name         String
+  symbol       String?
+  updatedAt    DateTime     @updatedAt
+  salaryBands  SalaryBand[]
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  createdBy   User?   @relation("CurrencyCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model ExchangeRate {
+  id             String       @id @default(uuid())
+  baseCurrency   String
+  targetCurrency String
+  rate           Float
+  effectiveDate  DateTime
+  recordStatus   RecordStatus @default(PENDING_APPROVAL)
+}
+
+model SalaryBand {
+  id           String       @id @default(uuid())
+  jobLevelId   String
+  currencyId   String
+  minSalary    Float
+  maxSalary    Float
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  jobLevel JobLevel @relation(fields: [jobLevelId], references: [id])
+  currency Currency @relation(fields: [currencyId], references: [id])
+
+  steps SalaryBandStep[]
+  // @@unique([jobLevelId, currencyId])
+}
+
+model SalaryBandStep {
+  id           String       @id @default(uuid())
+  salaryBandId String
+  stepNumber   Int
+  amount       Float
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  salaryBand SalaryBand @relation(fields: [salaryBandId], references: [id])
+
+  @@unique([salaryBandId, stepNumber])
+}
+
+model Donor {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  email        String?
+  phone        String?
+  website      String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  donorType    DonorType    @default(INSTITUTIONAL_DONOR)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projects ProjectDonor[]
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("DonorDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("DonorCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Service {
+  id           String       @id @default(uuid())
+  case         Case         @relation(fields: [caseId], references: [id])
+  caseId       String
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  serviceType String // cash, medical, legal, education, psychosocial, etc.
+  provider    Organization? @relation(fields: [providerId], references: [id])
+  providerId  String?
+
+  status         ServiceStatus @default(REQUESTED)
+  referralDate   DateTime?
+  completionDate DateTime?
+  outcomeNotes   String?
+  amount         Float? // for cash/services with value
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ServiceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ServiceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@map("services")
+}
+
+model Incident {
+  id     String @id @default(uuid())
+  case   Case   @relation(fields: [caseId], references: [id])
+  caseId String
+
+  incidentDate            DateTime
+  incidentType            String // physical_violence, neglect, exploitation, etc.
+  description             String
+  perpetratorRelationship String?
+  location                String?
+  reportedToAuthorities   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("IncidentDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("IncidentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@map("incidents")
+}
+
+model CaseNote {
+  id     String @id @default(uuid())
+  case   Case   @relation(fields: [caseId], references: [id])
+  caseId String
+
+  noteDate DateTime
+  content  String
+  type     String? // assessment, home_visit, phone_call, referral, closure, etc.
+
+  attachments Json? // [{name, url, type}, ...]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("CaseNoteDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?     @relation("CaseNoteCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  Employee    Employee? @relation(fields: [employeeId], references: [id])
+  employeeId  String?
+
+  @@map("case_notes")
+}
+
+model SystemCheck {
+  id          String          @id @default(uuid())
+  createdById String?
+  createdBy   User?           @relation("SystemCheckCreatedBy", fields: [createdById], references: [id])
+  type        RequirementType
+  description String
+  status      CheckStatus
+  checkedAt   DateTime        @default(now())
+}
+
+model Program {
+  id                 String             @id @default(uuid())
+  name               String             @unique
+  description        String?
+  startDate          DateTime
+  endDate            DateTime?
+  recordStatus       RecordStatus       @default(PENDING_APPROVAL)
+  budget             Float?
+  objective          String?
+  baseline           String?
+  midline            String?
+  endline            String?
+  indicators         ProgramIndicator[]
+  status             ProgramStatus      @default(ACTIVE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  reportingFrequency PayFrequency       @default(QUARTERLY)
+
+  // Relations
+  projects            Project[]
+  orgDocs             OrgDocs[]
+  interventionBatches InterventionBatch[]
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ProgramDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ProgramCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model InterventionBatch {
+  id           String       @id @default(uuid())
+  name         String
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  intervention   Intervention @relation(fields: [interventionId], references: [id])
+  interventionId String
+
+  programs    Program? @relation(fields: [programId], references: [id])
+  programId   String?
+  capacity    Int?
+  facilitator String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  stateId               String?
+  state                 NigeriaState?           @relation(fields: [stateId], references: [id])
+  beneficiaryAttendance BeneficiaryAttendance[]
+
+  lgaId String?
+  lga   Lga?    @relation(fields: [lgaId], references: [id])
+
+  totalBudget   Decimal?
+  location      String?
+  startDate     DateTime?
+  endDate       DateTime?
+  beneficiaries BeneficiaryIntervention[]
+  // geo fence
+  latitude      Float?
+  longitude     Float?
+  radiusMeters  Float?
+
+  createdBy   User?   @relation("InterventionBatchCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Organization {
+  id            String       @id @default(uuid())
+  name          String       @unique
+  type          String? // ngo, government, un, community, etc.
+  contactPerson String?
+  phone         String?
+  recordStatus  RecordStatus @default(PENDING_APPROVAL)
+  email         String?
+  isPartner     Boolean      @default(false)
+  website       String?
+  address       String?
+  city          String?
+  countryId     String?
+  regNumber     String?
+
+  orgDocs   OrgDocs[]
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  serviceTypesId String?
+  serviceTypes   ServiceType?   @relation(fields: [serviceTypesId], references: [id], onDelete: SetNull)
+  state          NigeriaState[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("OrganizationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?     @relation("OrganizationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  Service     Service[]
+
+  @@map("organizations")
+}
+
+model ServiceType {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  organization Organization[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ServiceTypeDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ServiceTypeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model OrgDocs {
+  id           String       @id @default(uuid())
+  name         String
+  originalName String
+  url          String
+  type         String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  file         String? // just place hode for the file input
+  description  String?
+  docGroup     DocGroup     @default(EMPLOYEE)
+  expiry       DateTime?
+
+  employeeId       String?
+  programId        String?
+  organizationId   String?
+  beneficiaryId    String?
+  leaveRequestId   String?
+  meFieldMonitorId String?
+
+  employee       Employee?       @relation(fields: [employeeId], references: [id])
+  program        Program?        @relation(fields: [programId], references: [id])
+  organization   Organization?   @relation(fields: [organizationId], references: [id])
+  beneficiary    Beneficiary?    @relation(fields: [beneficiaryId], references: [id])
+  leaveRequest   LeaveRequest?   @relation(fields: [leaveRequestId], references: [id])
+  meFieldMonitor MEFieldMonitor? @relation(fields: [meFieldMonitorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("OrgDocsDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("OrgDocsCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model MEFieldMonitor {
+  id             String    @id @default(uuid())
+  visitDate      DateTime?
+  findings       String? // ngo, government, un, community, etc.
+  orgDocs        OrgDocs[]
+  gpscoordinates String?
+  recommendation String
+
+  docGroup  DocGroup @default(INTERVENTION)
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+
+  beneficiary   Beneficiary? @relation(fields: [beneficiaryId], references: [id])
+  beneficiaryId String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("MEFieldMonitorDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("MEFieldMonitorCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Case {
+  id            String      @id @default(uuid())
+  caseNumber    String      @unique // e.g. CM-LAG-2025-000123
+  beneficiary   Beneficiary @relation(fields: [beneficiaryId], references: [id])
+  beneficiaryId String
+
+  caseType  CaseType
+  status    CaseStatus @default(NEW)
+  riskLevel RiskLevel?
+  priority  Int?       @default(0)
+
+  caseWorker   Employee @relation(fields: [caseWorkerId], references: [id])
+  caseWorkerId String
+
+  openingDate  DateTime
+  closingDate  DateTime?
+  followUpDate DateTime?
+
+  assessments CaseAssessment[]
+  services    Service[]
+  incidents   Incident[]
+  //payments        Payment[]
+  notes       CaseNote[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("CaseDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?       @relation("CaseCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  Grievance   Grievance[]
+
+  @@index([beneficiaryId])
+  @@index([caseWorkerId])
+  @@index([status])
+  @@map("cases")
+}
+
+model CaseAssessment {
+  id     String @id @default(uuid())
+  case   Case   @relation(fields: [caseId], references: [id])
+  caseId String
+
+  assessmentDate  DateTime
+  templateVersion String? // e.g. "v1.2-protection"
+  answers         Json? // flexible answers
+  vulnerabilities String[] // e.g. ["disability", "elderly", "orphan"]
+  protectionRisks String[]
+  totalScore      Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("CaseAssessmentDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?     @relation("CaseAssessmentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  Employee    Employee? @relation(fields: [employeeId], references: [id])
+  employeeId  String?
+
+  @@map("assessments")
+}
+
+model ProgramIndicator {
+  id                String             @id @default(uuid())
+  programId         String
+  masterIndicatorId String
+  recordStatus      RecordStatus       @default(PENDING_APPROVAL)
+  target            Float
+  program           Program            @relation(fields: [programId], references: [id])
+  masterIndicator   MasterIndicator    @relation(fields: [masterIndicatorId], references: [id])
+  projects          ProjectIndicator[]
+}
+
+model ProjectIndicator {
+  id                 String            @id @default(uuid())
+  projectId          String
+  programIndicatorId String
+  recordStatus       RecordStatus      @default(PENDING_APPROVAL)
+  target             Float
+  project            Project           @relation(fields: [projectId], references: [id])
+  programIndicator   ProgramIndicator  @relation(fields: [programIndicatorId], references: [id])
+  reports            IndicatorReport[]
+}
+
+model IndicatorReport {
+  id                 String   @id @default(uuid())
+  projectIndicatorId String
+  reportingPeriod    String // 2025-Q1, 2025-01 etc.
+  actualValue        Float
+  male               Int      @default(0)
+  female             Int      @default(0)
+  youth              Int      @default(0)
+  pwd                Int      @default(0)
+  verified           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+
+  projectIndicator ProjectIndicator @relation(fields: [projectIndicatorId], references: [id])
+}
+
+model MasterIndicator {
+  id           String       @id @default(uuid())
+  code         String       @unique
+  name         String
+  definition   String
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  unit         String // eg Persons, Households, Communities, Schools, Health Facilities, Units, Workshops
+
+  frequency    PayFrequency
+  type         IndicatorType // Output, Outcome, Impact
+  programLinks ProgramIndicator[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("MasterIndicatorDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("MasterIndicatorCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Project {
+  id               String             @id @default(uuid())
+  name             String
+  objective        String?
+  deliverables     String?
+  details          String?
+  recordStatus     RecordStatus       @default(PENDING_APPROVAL)
+  location         String?
+  budget           Float?
+  amountSpent      Float?
+  riskLevel        RiskLevel          @default(LOW)
+  programStatus    ProgramStatus      @default(ACTIVE)
+  startDate        DateTime
+  endDate          DateTime?
+  indicators       ProjectIndicator[]
+  equipmentRequest EquipmentRequest[]
+  employeeRequest  EmployeeRequest[]
+  interventions    Intervention[]
+
+  programId      String
+  program        Program       @relation(fields: [programId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations 
+  employees       ProjectEmployee[]
+  mefieldMonitor  MEFieldMonitor[]
+  donors          ProjectDonor[]
+  projectActivity ProjectActivity[]
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ProjectDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy              User?                    @relation("ProjectCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById            String?
+  AssetProjectAllocation AssetProjectAllocation[]
+  AssetAssignment        AssetAssignment[]
+}
+
+model ProjectActivity {
+  id             String        @id @default(uuid())
+  name           String
+  details        String?
+  budget         Float?
+  recordStatus   RecordStatus  @default(PENDING_APPROVAL)
+  amountSpent    Float?
+  status         ProgramStatus @default(ACTIVE)
+  riskLevel      RiskLevel?
+  riskImpact     String?
+  riskScore      Float?
+  mitigationPlan String?
+
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  employees                    Employee[]
+  projectActivityChangeRequest ProjectActivityChangeRequest[]
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ProjectActivityDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ProjectActivityCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model ProjectActivityChangeRequest {
+  id           String         @id @default(uuid())
+  changeTyoe   String?
+  impact       String?
+  costImpact   Float?
+  recordStatus RecordStatus   @default(PENDING_APPROVAL)
+  status       ApprovalStatus @default(PENDING)
+
+  activityId      String
+  projectActivity ProjectActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ChangeRequestDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ChangeRequestCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Training {
+  id           String               @id @default(uuid())
+  title        String
+  description  String?
+  startDate    DateTime?
+  recordStatus RecordStatus         @default(PENDING_APPROVAL)
+  endDate      DateTime?
+  enrollments  TrainingEnrollment[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("TrainingDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("TrainingCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model TrainingEnrollment {
+  id           String       @id @default(uuid())
+  training     Training     @relation(fields: [trainingId], references: [id])
+  trainingId   String
+  employee     Employee?    @relation(fields: [employeeId], references: [id])
+  employeeId   String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  status    TrainingStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("TrainingEnrollmentDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("TrainingEnrollmentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Beneficiary {
+  id           String       @id @default(uuid())
+  benId        String?      @unique
+  name         String
+  gender       Gender?      @relation(fields: [genderId], references: [id])
+  genderId     String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  url          String?
+  file         String?
+  originalName String?
+
+  beneficiaryType   BeneficiaryType   @default(WIDOW) // ← now defaults to WIDOW and is required
+  beneficiaryStatus BeneficiaryStatus @default(ACTIVE) // ← now defaults to WIDOW and is required
+
+  dob           DateTime?
+  phone         String
+  address       String
+  city          String?
+  email         String?
+  avatar        String?
+  householdSize String?
+  income        Float?
+  stateId       String?
+  state         NigeriaState? @relation(fields: [stateId], references: [id])
+  lgaId         String?
+  lga           Lga?          @relation(fields: [lgaId], references: [id])
+
+  case                     Case[]
+  orgDocs                  OrgDocs[]
+  grievance                Grievance[]
+  beneficiaryAttendance    BeneficiaryAttendance[]
+  beneficiaryFieldVisit    BeneficiaryFieldVisit[]
+  beneficiaryRequest       BeneficiaryRequest[]
+  beneficiaryFeedback      BeneficiaryFeedback[]
+  vulnerabilityAssessments VulnerabilityAssessment[]
+  beneficiaryOutcomes      BeneficiaryOutcome[]
+  beneficiaryIntervention  BeneficiaryIntervention[]
+  mefieldMonitor           MEFieldMonitor[]
+  disabled                 Boolean?                  @default(false)
+  requireGuardian          Boolean?                  @default(false)
+  linkedEmployee           Employee?                 @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  employeeId               String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("BeneficiaryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+  createdById String?
+  User        User?
+}
+
+model BeneficiaryIntervention {
+  id           String       @id @default(uuid())
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  beneficiary         Beneficiary          @relation(fields: [beneficiaryId], references: [id])
+  beneficiaryId       String
+  interventionBatch   InterventionBatch    @relation(fields: [batchId], references: [id])
+  batchId             String
+  notes               String?
+  beneficiaryOutcomes BeneficiaryOutcome[]
+
+  // outcome link
+  status    InterventionStatus?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model VulnerabilityAssessment {
+  id               String       @id @default(uuid())
+  recordStatus     RecordStatus @default(PENDING_APPROVAL)
+  beneficiaryId    String
+  beneficiary      Beneficiary  @relation(fields: [beneficiaryId], references: [id])
+  incomeLevel      Float?
+  disability       Boolean?
+  housingCondition String?
+  foodSecurity     String?
+  educationLevel   String?
+
+  score        Int? // Score 90 → extremely vulnerable, 60 → vulnerable, 20 → stable
+  assessedById String?
+  assessedAt   DateTime @default(now())
+
+  notes String?
+}
+
+model InterventionCategory {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  // Soft delete + audit
+  deletedAt     DateTime?
+  deletedBy     User?          @relation("InterventionCategoryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById   String?
+  interventions Intervention[]
+
+  // creator  
+  createdBy   User?   @relation("InterventionCategoryCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  description String?
+}
+
+model Intervention {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  description  String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  category   InterventionCategory @relation(fields: [categoryId], references: [id])
+  categoryId String
+  projectId  String?
+  project    Project?             @relation(fields: [projectId], references: [id])
+
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  batches             InterventionBatch[]
+  beneficiaryOutcomes BeneficiaryOutcome[]
+
+  // creator  
+  createdBy   User?   @relation("InterventionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model ProjectEmployee {
+  id           String       @id @default(uuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  role       String? // e.g. Project Manager, M&E Officer
+  assignedAt DateTime @default(now())
+
+  projectId  String
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employeeId String?
+  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ProjectEmployeeDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ProjectEmployeeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([projectId, employeeId])
+}
+
+model ProjectDonor {
+  id                 String       @id @default(uuid())
+  contributionAmount Float?
+  currency           String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  recordStatus       RecordStatus @default(PENDING_APPROVAL)
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  donorId   String?
+  donor     Donor?   @relation(fields: [donorId], references: [id], onDelete: SetNull)
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ProjectDonorDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ProjectDonorCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([projectId, donorId])
+}
+
+model NigeriaState {
+  id   String @id @default(uuid())
+  name String @unique
+
+  // creator  
+  createdBy   User?   @relation("NigeriaStateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contactInfo       ContactInfo[]
+  emergencyContact  EmergencyContact[]
+  officeLocation    OfficeLocation[]
+  applicationForm   Applicationform[]
+  beneficiary       Beneficiary[]
+  Organization      Organization?       @relation(fields: [organizationId], references: [id])
+  organizationId    String?
+  lgas              Lga[]
+  interventionBatch InterventionBatch[]
+}
+
+model BeneficiaryOutcome {
+  id            String       @id @default(uuid())
+  beneficiaryId String
+  beneficiary   Beneficiary  @relation(fields: [beneficiaryId], references: [id])
+  recordStatus  RecordStatus @default(PENDING_APPROVAL)
+
+  interventionId            String
+  intervention              Intervention             @relation(fields: [interventionId], references: [id])
+  beneficiaryInterventionId String?
+  beneficiaryIntervention   BeneficiaryIntervention? @relation(fields: [beneficiaryInterventionId], references: [id])
+
+  incomeBefore Float?
+  incomeAfter  Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  employmentStatus String?
+  businessStarted  Boolean?
+  outcomeDate      DateTime @default(now())
+  notes            String?
+}
+
+model Lga {
+  id      String       @id @default(uuid())
+  name    String
+  state   NigeriaState @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  stateId String
+
+  createdAt          DateTime            @default(now())
+  interventionBatchs InterventionBatch[]
+  updatedAt          DateTime            @updatedAt
+
+  // Add any future relations here, e.g.:
+  beneficiaries Beneficiary[] // if you later want LGA-level filtering
+
+  // Optional: make name unique per state (recommended to avoid duplicates like "Sabon Gari" in multiple states)
+  @@unique([stateId, name])
+}
+
+model LeavePolicy {
+  id           String       @id @default(uuid())
+  leaveTypeId  String
+  leaveType    LeaveType    @relation(fields: [leaveTypeId], references: [id])
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  annualDays  Int
+  accrualType AccrualFrequency @default(ANNUALLY)
+  accrualRate Float? // e.g 1.5 days per month
+
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+model LeaveType {
+  id                    String           @id @default(uuid())
+  name                  String           @unique // "Annual Leave", "Sick Leave",
+  code                  String?          @unique // e.g. AL, SL, MAT
+  recordStatus          RecordStatus     @default(PENDING_APPROVAL)
+  description           String?
+  unit                  LeaveUnit        @default(DAYS)
+  isPaid                Boolean          @default(true)
+  requiresApproval      Boolean?         @default(true)
+  requiresAttachment    Boolean?         @default(false)
+  maxDaysPerRequest     Int? // e.g. 21 days max at once
+  minNoticeDays         Int? // e.g. 7 days notice required
+  accrualFrequency      AccrualFrequency @default(ANNUALLY)
+  accrualRate           Float? // e.g. 1.75 days per month (21/12)
+  maxAccrualBalance     Float? // cap on accumulation
+  carryOverAllowed      Boolean          @default(false)
+  maxCarryOverDays      Float? // e.g. 10 days can carry over
+  carryOverExpiryMonths Int? // e.g. carry-over expires after 6 months
+  isActive              Boolean          @default(true)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  leaveRequests LeaveRequest[]
+  policies      LeavePolicy[]
+  leaveBalances LeaveBalance[] // current snapshot per employee
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("LeaveTypeDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("LeaveTypeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@map("leave_types")
+}
+
+model HolidayCalendar {
+  id           String         @id @default(uuid())
+  name         String
+  date         DateTime
+  isRecurring  Boolean        @default(false)
+  recordStatus RecordStatus   @default(PENDING_APPROVAL)
+  country      String?        @default("Nigeria")
+  workSchedule WorkSchedule[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("HolidayCalendarDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("HolidayCalendarCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([name, date])
+}
+
+// Current leave balance snapshot (updated after every request/accrual run)
+model LeaveBalance {
+  id              String   @id @default(uuid())
+  employeeId      String
+  leaveTypeId     String
+  balance         Float // remaining days/hours
+  usedThisYear    Float    @default(0)
+  accruedThisYear Float    @default(0)
+  carriedOver     Float    @default(0)
+  lastUpdated     DateTime @updatedAt
+  year            Int // for which period this balance applies
+
+  employee  Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("LeaveBalanceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("LeaveBalanceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([employeeId, leaveTypeId, year]) // one current balance per type per year
+  @@map("leave_balances")
+}
+
+model ContactInfo {
+  id           String       @id @default(uuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  address   String
+  zipcode   String
+  apartment String?
+  email     String
+  mobile    String?
+  phone     String?
+
+  city String
+
+  employeeId String?
+  employee   Employee?     @relation(fields: [employeeId], references: [id])
+  countryId  String?
+  country    Country?      @relation(fields: [countryId], references: [id])
+  stateId    String?
+  state      NigeriaState? @relation(fields: [stateId], references: [id])
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ContactInfoDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ContactInfoCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model EmergencyContact {
+  id           String       @id @default(uuid())
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fullName       String
+  address        String
+  zipcode        String?
+  apartment      String?
+  email          String?
+  mobile         String
+  phone          String?
+  city           String?
+  relationShipId String?
+  relationShip   RelationShip? @relation(fields: [relationShipId], references: [id])
+
+  employeeId    String?
+  employee      Employee?     @relation(fields: [employeeId], references: [id])
+  countryId     String?
+  country       Country?      @relation(fields: [countryId], references: [id])
+  stateId       String?
+  nigeriaStates NigeriaState? @relation(fields: [stateId], references: [id])
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("EmergencyContactDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("EmergencyContactCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model EmploymentHistory {
+  id           String           @id @default(uuid())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  status       EmploymentStatus @default(PROBATION)
+  recordStatus RecordStatus     @default(PENDING_APPROVAL)
+
+  startDate      DateTime
+  endDate        DateTime?
+  isCurrent      Boolean     @default(false)
+  employmentType String? // "Probation", "Full-time", "Contract", "Volunteer"
+  departmentId   String?
+  department     Department? @relation(fields: [departmentId], references: [id])
+
+  officeRoleId String?
+  officeRole   OfficeRole? @relation(fields: [officeRoleId], references: [id], onDelete: SetNull)
+
+  reasonForChange String? // e.g. "Promotion", "Role expansion", "Contract renewal"
+  notes           String? // achievements, key responsibilities
+
+  supervisorId String?
+  supervisor   Employee? @relation("EmploymentSupervisor", fields: [supervisorId], references: [id])
+
+  jobLevelId String?
+  jobLevel   JobLevel? @relation(fields: [jobLevelId], references: [id])
+
+  employeeId String?
+  employee   Employee?       @relation("EmployeeEmploymentHistory", fields: [employeeId], references: [id])
+  locationId String?
+  location   OfficeLocation? @relation(fields: [locationId], references: [id])
+
+  positionId String?
+  position   OfficePosition? @relation(fields: [positionId], references: [id])
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("EmploymentHistoryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("EmploymentHistoryCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@index([supervisorId])
+  @@index([createdById])
+}
+
+model RelationShip {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  emergencyContact EmergencyContact[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("RelationShipDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("RelationShipCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model SalaryStructure {
+  id               String       @id @default(uuid())
+  jobLevelId       String       @unique
+  basicPercent     Float // % of gross
+  housingPercent   Float
+  recordStatus     RecordStatus @default(PENDING_APPROVAL)
+  transportPercent Float
+  medicalPercent   Float
+  pensionPercent   Float
+  taxPercent       Float
+  jobLevel         JobLevel     @relation(fields: [jobLevelId], references: [id])
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("SalaryStructureDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("SalaryStructureCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model JobLevel {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  code         String       @unique
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  description      String?
+  salaryBand       SalaryBand[]
+  officePosition   OfficePosition[]
+  salaryStructures SalaryStructure[]
+
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  employmentHistory EmploymentHistory[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("JobLevelDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("JobLevelCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Religion {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  personalnfo PersonalInfo[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ReligionDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ReligionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Department {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  description  String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  employmentHistory EmploymentHistory[]
+  units             Unit[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("DepartmentDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("DepartmentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Unit {
+  id           String       @id @default(uuid())
+  name         String
+  description  String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  // relation to Department
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  departmentId String? // use createdById?: String in create service
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("UnitDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("UnitCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([name, departmentId]) // prevents duplicate unit names inside same department
+}
+
+model Country {
+  id   String @id @default(uuid())
+  name String @unique
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  contactInfo      ContactInfo[]
+  emergencyContact EmergencyContact[]
+}
+
+model Nationality {
+  id   String @id @default(uuid())
+  name String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  personalInfo PersonalInfo[]
+}
+
+model Gender {
+  id              String            @id @default(uuid())
+  name            String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  employee        Employee[]
+  applicationForm Applicationform[]
+  recordStatus    RecordStatus      @default(PENDING_APPROVAL)
+  beneficiary     Beneficiary[]
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("GenderDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("GenderCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model MarritalStatus {
+  id              String            @id @default(uuid())
+  name            String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  applicationForm Applicationform[]
+  personalInfo    PersonalInfo[]
+  recordStatus    RecordStatus      @default(PENDING_APPROVAL)
+
+  // Soft delete + audit
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("MarritalStatusDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("MarritalStatusCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Shift {
+  id                    String          @id @default(uuid())
+  name                  String          @unique
+  description           String?
+  startTime             DateTime
+  endTime               DateTime
+  recordStatus          RecordStatus    @default(PENDING_APPROVAL)
+  attendances           Attendance[]
+  employees             ShiftEmployee[]
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  breakMinutes          Int?
+  shiftDifferentialRate Float? // allowance multiplier
+
+  rotationPattern String? // JSON
+  scheduleId      String?
+  schedule        WorkSchedule? @relation(fields: [scheduleId], references: [id])
+  isNightShift    Boolean       @default(false)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ShiftDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("ShiftCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+// Many-to-many join table for Employee <-> Shift
+model ShiftEmployee {
+  id           String       @id @default(uuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  shiftId    String
+  shift      Shift     @relation(fields: [shiftId], references: [id])
+  employeeId String?
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ShiftEmployeeDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+
+  // creator  
+  createdBy   User?   @relation("ShiftEmployeeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Attendance {
+  id                  String                @id @default(uuid())
+  clockIn             DateTime
+  clockOut            DateTime?
+  shift               Shift?                @relation(fields: [shiftId], references: [id])
+  shiftId             String?
+  attendanceException AttendanceException[]
+  recordStatus        RecordStatus          @default(PENDING_APPROVAL)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  workDate  DateTime @default(now())
+
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  notes      String?
+
+  //deviceId        String?
+  //device          Device?  @relation(fields: [deviceId], references: [id])
+
+  captureMethod CaptureMethod? @default(WEB)
+  gpsLatitude   Float?
+  gpsLongitude  Float?
+
+  ipAddress       String?
+  timestampSource TimestampSource?
+  statusId        String?
+  status          AttendanceStatus? @relation(fields: [statusId], references: [id])
+
+  overtimeHours    Float   @default(0)
+  isManualOverride Boolean @default(false)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AttendanceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("AttendanceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([employeeId, workDate])
+}
+
+model AttendanceStatus {
+  id           String       @id @default(uuid())
+  code         String       @unique
+  name         String
+  description  String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  policyRule            String?
+  autoGenerated         Boolean                 @default(true)
+  attendances           Attendance[]
+  beneficiaryAttendance BeneficiaryAttendance[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AttendanceStatusDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("AttendanceStatusCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PersonalInfo {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  dob            DateTime?
+  recordStatus   RecordStatus @default(PENDING_APPROVAL)
+  avatar         String?
+  file           String?
+  originalName   String?
+  url            String?
+  bloodgroup     String?
+  pensionId      String?
+  tin            String?
+  passportNumber String?
+
+  nationalId String?
+  disability Boolean   @default(false)
+  religionId String?
+  religion   Religion? @relation(fields: [religionId], references: [id])
+
+  // Relations 
+  nationalityId    String?
+  nationality      Nationality?    @relation(fields: [nationalityId], references: [id])
+  employeeId       String?
+  employee         Employee?       @relation(fields: [employeeId], references: [id])
+  marritalStatusId String?
+  marritalStatus   MarritalStatus? @relation(fields: [marritalStatusId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PersonalInfoDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("PersonalInfoCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model OfficeLocation {
+  id           String       @id @default(uuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  name         String       @unique
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  // Relations 
+  stateId           String?
+  state             NigeriaState?       @relation(fields: [stateId], references: [id])
+  employmentHistory EmploymentHistory[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("OfficeLocationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("OfficeLocationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  Asset       Asset[]
+}
+
+model OfficePosition {
+  id                String              @id @default(uuid())
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  name              String              @unique
+  employmentHistory EmploymentHistory[]
+  recordStatus      RecordStatus        @default(PENDING_APPROVAL)
+  jobLevelId        String?
+  jobLevel          JobLevel?           @relation(fields: [jobLevelId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("OfficePositionDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("OfficePositionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model OfficeRole {
+  id                String              @id @default(uuid())
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  name              String              @unique
+  employmentHistory EmploymentHistory[]
+  recordStatus      RecordStatus        @default(PENDING_APPROVAL)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("OfficeRoleDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("OfficeRoleCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model UserActivity {
+  id String @id @default(uuid())
+
+  createdById String?
+
+  activityType String // login, logout, create, update, delete, read
+  resource     String? // beneficiary, user, payroll etc
+  resourceId   String? // affected record
+
+  details Json?
+
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  createdBy User? @relation(fields: [createdById], references: [id])
+
+  @@index([createdById])
+  @@index([resource])
+  @@index([timestamp])
+}
+
+model LeaveRequest {
+  id            String        @id @default(uuid())
+  employeeId    String
+  leaveTypeId   String
+  recordStatus  RecordStatus  @default(PENDING_APPROVAL)
+  startDate     DateTime
+  endDate       DateTime
+  daysRequested Float // calculated or entered (in days or hours)
+  reason        String?
+  attachmentUrl String? // medical cert, etc.
+  comments      String?
+  status        RequestStatus @default(PENDING)
+
+  employee  Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  attachments OrgDocs[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("LeaveRequestDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("LeaveRequestCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@map("leave_requests")
+}
+
+model Vacancy {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  startDate    DateTime
+  endDate      DateTime
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  requirements String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  assignedTo   Employee? @relation("VacancyAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedToId String?
+
+  // New: one-to-one relation (back-reference)
+  applicationForm Applicationform[]
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("VacancyDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("VacancyCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model EmployeeDegree {
+  id             String       @id @default(uuid())
+  degreeLevel    DegreeLevel
+  fieldOfStudy   String // e.g., "Computer Science", "Business Administration"
+  institution    String
+  graduationYear Int? // or DateTime? if you want full date
+  recordStatus   RecordStatus @default(PENDING_APPROVAL)
+  startYear      Int?
+  endYear        Int?
+  grade          String? // e.g., "First Class", "3.8 GPA"
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("EmployeeDegreeDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("EmployeeDegreeCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@index([employeeId])
+}
+
+model EmployeeCertificate {
+  id            String          @id @default(uuid())
+  name          String // e.g., "Project Management Professional (PMP)"
+  type          CertificateType
+  issuingOrg    String // e.g., "PMI", "Google", "Coursera"
+  recordStatus  RecordStatus    @default(PENDING_APPROVAL)
+  issueDate     DateTime?
+  expiryDate    DateTime?
+  credentialId  String? // e.g., certificate number or URL
+  credentialUrl String? // link to verify (LinkedIn, Credly, etc.)
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("EmployeeCertificateDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  // creator  
+  createdBy   User?   @relation("EmployeeCertificateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@index([employeeId])
+}
+
+model Applicationform {
+  id        String   @id @default(uuid())
+  fname     String
+  lname     String
+  mname     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status EmploymentStatus @default(JOB_APPLICANT)
+
+  // Foreign key → required relation to Vacancy
+  vacancyId String
+  vacancy   Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+
+  // ──────────────────────────────────────────────────────────────
+  // Repeatable sections stored as JSON (most practical approach)
+  // ──────────────────────────────────────────────────────────────
+  education      Json? // array of education entries
+  certifications Json? // array of certification entries
+  workExperience Json? // array of work experience entries
+  languages      Json? // array of language entries
+  references     Json? // array of reference entries
+
+  // Single fields (non-repeatable sections)
+  title              String?
+  dateOfBirth        DateTime?
+  nationality        String?
+  email              String?
+  phoneNumber        String?
+  alternatePhone     String?
+  address            String?
+  city               String?
+  country            String?
+  postalCode         String?
+  nin                String?
+  passportNumber     String?
+  hasDisability      Boolean?  @default(false)
+  disabilityDetails  String?
+  positionApplied    String?
+  availableStartDate DateTime?
+  expectedSalary     Float?
+  willingToRelocate  String? // "Yes", "No", "Depends"
+  technicalSkills    String?
+  softSkills         String?
+  computerSkills     String?
+
+  genderId         String?
+  gender           Gender?         @relation(fields: [genderId], references: [id])
+  marritalStatusId String?
+  marritalStatus   MarritalStatus? @relation(fields: [marritalStatusId], references: [id])
+  stateId          String?
+  state            NigeriaState?   @relation(fields: [stateId], references: [id])
+
+  // Files (store URLs after upload)
+  cvUrl            String?
+  coverLetterUrl   String?
+  certificatesUrls Json? // array of strings
+  idDocumentUrl    String?
+
+  // Declaration
+  confirmAccuracy       Boolean @default(false)
+  consentDataProcessing Boolean @default(false)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ApplicationformDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  @@index([vacancyId])
+}
+
+model DisciplinaryCase {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  status      DisciplinaryStatus @default(REPORTED)
+  actionTaken DisciplinaryAction @default(NONE)
+
+  incidentDate   DateTime
+  resolutionDate DateTime?
+
+  employeeId String?
+  employee   Employee? @relation("EmployeeDisciplinaryCases", fields: [employeeId], references: [id])
+
+  reportedById String?
+  reportedBy   User?   @relation("DisciplinaryReportedBy", fields: [reportedById], references: [id])
+
+  investigatorId String?
+  investigator   User?   @relation("DisciplinaryInvestigator", fields: [investigatorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("DisciplinaryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("DisciplinaryCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model AssetCategory {
+  id           String       @id @default(uuid())
+  name         String       @unique
+  description  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AssetCategoryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AssetCategoryCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  assets           Asset[]
+  employeeRequest  EmployeeRequest[]
+  equipmentRequest EquipmentRequest[]
+}
+
+model Asset {
+  id              String       @id @default(uuid())
+  assetTag        String       @unique // e.g. "LAG-CMP-001"
+  name            String
+  avatar          String?
+  url             String?
+  recordStatus    RecordStatus @default(PENDING_APPROVAL)
+  originalName    String?
+  description     String?
+  serialNumber    String?
+  model           String?
+  manufacturer    String?
+  purchaseDate    DateTime?
+  purchasePrice   Float?
+  currency        String?      @default("NGN")
+  salvageValue    Float?       @default(0)
+  usefulLifeYears Int? // e.g. 5 years
+
+  depreciationMethod DepreciationMethod @default(STRAIGHT_LINE)
+  status             AssetStatus        @default(AVAILABLE)
+  category           AssetCategory?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId         String?
+
+  location   OfficeLocation? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  locationId String?
+
+  notes String?
+
+  // Current assignment (optional – for quick query; history in AssetAssignment)
+  //currentAssignment   AssetAssignment? @relation("CurrentAssignment")
+
+  assignments   AssetAssignment[]   @relation("AssetToAssignments")
+  depreciations AssetDepreciation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AssetDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AssetCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  currentBookValue Float? // Denormalized for fast reads/queries
+  disposedAt       DateTime?
+  disposalMethod   AssetDisposalMethod?
+  disposalValue    Float?
+  disposalNotes    String?
+
+  // Project-based allocation (many-to-many with percentage support)
+  projectAllocations AssetProjectAllocation[]
+
+  disposal   AssetDisposal? @relation("AssetDisposalRelation")
+  disposalId String?
+
+  @@map("assets")
+}
+
+model AssetProjectAllocation {
+  id           String       @id @default(uuid())
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  asset        Asset        @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId      String
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId    String
+
+  allocationPercentage Float @default(100) // 100 = fully allocated to this project
+
+  allocatedAt   DateTime  @default(now())
+  deallocatedAt DateTime?
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AssetProjectAllocationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AssetProjectAllocationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([assetId, projectId])
+  @@map("asset_project_allocations")
+}
+
+model AssetDisposal {
+  id           String       @id @default(uuid())
+  asset        Asset        @relation("AssetDisposalRelation", fields: [assetId], references: [id], onDelete: Cascade)
+  assetId      String       @unique
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  method        AssetDisposalMethod
+  disposalDate  DateTime
+  disposalValue Float? // sale proceeds or estimated scrap value
+  buyer         String? // if sold
+  notes         String?
+  disposedBy    Employee?           @relation("AssetDisposedBy", fields: [disposedById], references: [id])
+  disposedById  String?
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AssetDisposalDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AssetDisposalCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AssetAssignment {
+  id           String       @id @default(uuid())
+  asset        Asset        @relation("AssetToAssignments", fields: [assetId], references: [id], onDelete: Cascade)
+  assetId      String
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  assignedToType AssignmentType
+  assignedToId   String? // Polymorphic: can be Employee.id, Project.id, etc.
+
+  // Optional relations – connect whichever makes sense
+  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+  employeeId String?
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId  String?
+  // Add more: departmentId, organizationId, etc. if needed
+
+  checkedOutAt   DateTime @default(now())
+  checkedOutBy   User?    @relation("CheckedOutBy", fields: [checkedOutById], references: [id], onDelete: SetNull)
+  checkedOutById String?
+
+  expectedReturn DateTime?
+  actualReturn   DateTime?
+
+  returnedBy        User?   @relation("ReturnedBy", fields: [returnedById], references: [id], onDelete: SetNull)
+  returnedById      String?
+  purpose           String? // e.g. "Field work in Kano", "Office use"
+  conditionOnReturn String? // e.g. "Good", "Damaged - screen cracked"
+  notes             String?
+
+  isActive Boolean @default(true) // true = checked out, false = returned
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AssetAssignmentDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AssetAssignmentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  // For quick query of currently assigned assets
+  @@index([assetId, isActive])
+}
+
+model AssetDepreciation {
+  id      String @id @default(uuid())
+  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId String
+
+  periodStart             DateTime // e.g. beginning of month/year
+  periodEnd               DateTime
+  depreciationAmount      Float
+  accumulatedDepreciation Float // running total up to this period
+  bookValue               Float // purchasePrice - accumulatedDepreciation
+  methodUsed              DepreciationMethod
+  notes                   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AssetDepreciationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AssetDepreciationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([assetId, periodStart]) // one entry per period per asset
+}
+
+model PayrollPeriod {
+  id         String          @id @default(uuid())
+  name       String          @unique
+  startDate  DateTime
+  endDate    DateTime
+  status     PayrollStatus   @default(DRAFT)
+  locked     Boolean         @default(false)
+  payDate    DateTime?
+  calendarId String
+  calendar   PayrollCalendar @relation(fields: [calendarId], references: [id])
+
+  payrolls  Payroll[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollPeriodDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollPeriodCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Payroll {
+  id              String        @id @default(uuid())
+  grossPay        Float
+  totalEarnings   Float
+  totalDeductions Float
+  netPay          Float
+  payFrequency    PayFrequency? // snapshot from PayrollPeriod
+
+  paye    Float
+  pension Float
+  nhf     Float
+  nhis    Float
+
+  basicSalary     Float?
+  totalAllowances Float?
+
+  status PayrollStatus @default(DRAFT)
+
+  paymentMethod PaymentMethod @default(DIRECT_DEPOSIT)
+  locked        Boolean       @default(false)
+  employeeId    String
+  employee      Employee      @relation(fields: [employeeId], references: [id])
+
+  earnings              PayrollEarning[]
+  deductions            PayrollDeduction[]
+  allocations           PayrollAllocation[]
+  auditLogs             PayrollAuditLog[]
+  payrollDeductionOther PayrollDeductionOther[]
+  payrollEarningOther   PayrollEarningOther[]
+  payrollEmpBank        PayrollEmpBank[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy       User?          @relation("PayrollCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById     String?
+  PayrollPeriod   PayrollPeriod? @relation(fields: [payrollPeriodId], references: [id])
+  payrollPeriodId String?
+}
+
+model PayrollEmpBank {
+  id           String       @id @default(uuid())
+  name         String
+  number       String
+  branch       String
+  switf        String?
+  currency     String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  employeeId   String
+  employee     Employee     @relation(fields: [employeeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollEmpBankDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?    @relation("PayrollEmpBankCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  Payroll     Payroll? @relation(fields: [payrollId], references: [id])
+  payrollId   String?
+}
+
+model NgpayeBand {
+  id String @id @default(uuid())
+  B1 Float
+  B2 Float
+  B3 Float
+  B4 Float
+  B5 Float
+  B6 Float
+  P1 Float
+  P2 Float
+  P3 Float
+  P4 Float
+  P5 Float
+  P6 Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedBy   User?   @relation("NgpayeBandDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("NgpayeBandCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model Earning {
+  id              String          @id @default(uuid())
+  name            String // e.g., "Housing Allowance", "Transport Allowance", "Performance Bonus"
+  type            AllowanceType //Type of earning (fixed allowance, bonus, commission, overtime)
+  calculationType CalculationType // FIXED or PERCENTAGE
+  base            BaseComponent // What it is calculated from (BASIC, GROSS, TOTAL_PAYROLL)
+  rate            Float? // % or fixed amount
+  recurring       Boolean // True if every payroll, false if one-off
+  taxable         Boolean // Whether this earning is taxable (affects PAYE)
+  cap             Float? // Maximum value (if any)
+  effectiveFrom   DateTime        @default(now())
+  active          Boolean         @default(true)
+  description     String?
+
+  // For recurring or conditional payments (like bonus, overtime)
+  condition Json? // JSON object with rules for payment (optional)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PayrollEarning {
+  id           String       @id @default(uuid())
+  payrollId    String
+  name         String
+  amount       Float
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+  taxable      Boolean      @default(true)
+  percentage   Float? // optional for %-based deductions
+  payroll      Payroll      @relation(fields: [payrollId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollEarningDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollEarningCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollDeduction {
+  id         String  @id @default(uuid())
+  payrollId  String
+  name       String
+  amount     Float
+  preTax     Boolean @default(false)
+  percentage Float? // optional for %-based deductions
+
+  payroll Payroll @relation(fields: [payrollId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollDeductionDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollDeductionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollAllocation {
+  id        String @id @default(uuid())
+  payrollId String
+  projectId String
+  amount    Float
+
+  payroll Payroll @relation(fields: [payrollId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollAllocationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollAllocationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollAuditLog {
+  id          String   @id @default(uuid())
+  payrollId   String
+  action      String
+  performedBy String
+  createdAt   DateTime @default(now())
+
+  payroll Payroll @relation(fields: [payrollId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollAuditLogDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollAuditLogCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollProfile {
+  id         String @id @default(uuid())
+  employeeId String @unique
+
+  jobLevelId   String
+  salaryBandId String
+  stepNumber   Int
+  currencyId   String?
+  recordStatus RecordStatus @default(PENDING_APPROVAL)
+
+  basicSalary       Float
+  allowances        Float        @default(0)
+  payFrequency      PayFrequency @default(MONTHLY)
+  overtimeRate      Float        @default(0) // per hour
+  taxExemptions     Float        @default(0) // any exemptions reducing taxable income
+  nhfPercentage     Float        @default(2.5) // NHF contribution %
+  nhisPercentage    Float        @default(1.5) // NHIS contribution %
+  pensionPercentage Float        @default(8) // Pension contribution %
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollProfileDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  pensionEnabled Boolean @default(true)
+  taxEnabled     Boolean @default(true)
+  nhfEnabled     Boolean @default(true)
+
+  createdBy   User?   @relation("PayrollProfileCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollEarningOther {
+  id         String  @id @default(uuid())
+  payrollId  String
+  name       String
+  amount     Float
+  taxable    Boolean @default(true)
+  percentage Float? // optional for %-based deductions
+
+  payroll Payroll @relation(fields: [payrollId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollEarningOtherDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollEarningOtherCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollDeductionOther {
+  id         String  @id @default(uuid())
+  payrollId  String
+  name       String
+  amount     Float
+  preTax     Boolean @default(false)
+  percentage Float? // optional for %-based deductions
+
+  payroll Payroll @relation(fields: [payrollId], references: [id])
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("PayrollDeductionOtherDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("PayrollDeductionOtherCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model OvertimePolicy {
+  id                 String       @id @default(uuid())
+  name               String
+  overtimeMultiplier Float        @default(1.5)
+  weekendMultiplier  Float        @default(2)
+  holidayMultiplier  Float        @default(2)
+  minHoursThreshold  Float?
+  createdAt          DateTime     @default(now())
+  recordStatus       RecordStatus @default(PENDING_APPROVAL)
+}
+
+model Deduction {
+  id          String  @id @default(uuid())
+  name        String  @unique // e.g., "Pension", "PAYE", "NHF", "NSITF", "ITF", "GLI"
+  code        String  @unique // short code, e.g., "PAYE", "EMP_PENSION"
+  amount      Float?
+  percentage  Float?
+  isStatutory Boolean @default(false)
+
+  type            DeductionType // Employee, Employer, Both
+  calculationType CalculationType // Fixed, Percentage, Bracketed
+  base            BaseComponent // Basic, Gross, Allowances, TotalPayroll
+  rate            Float? // % if Percentage, or amount if Fixed
+  taxable         Boolean // Whether it affects taxable income
+  recurring       Boolean // True if deducted each payroll period
+  bracketConfig   Json? // For progressive taxes (PAYE) as array of {min, max, rate}
+  effectiveFrom   DateTime        @default(now())
+  active          Boolean         @default(true)
+  description     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Allowance {
+  id         String        @id @default(uuid())
+  name       String
+  type       AllowanceType
+  amount     Float?
+  percentage Float?
+  isTaxable  Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+}
+
+model AttendanceSummary {
+  id                   String   @id @default(uuid())
+  periodStart          DateTime
+  periodEnd            DateTime
+  workingDays          Int
+  presentDays          Int
+  absentDays           Int
+  overtimeHours        Int
+  unpaidLeaveDays      Int      @default(0)
+  latePenaltyAmount    Float?
+  shiftAllowanceAmount Float?
+
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("AttendanceSummaryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("AttendanceSummaryCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model AttendanceException {
+  id String @id @default(uuid())
+
+  attendanceId String
+  attendance   Attendance    @relation(fields: [attendanceId], references: [id])
+  type         ExceptionType
+  reason       String
+
+  supervisorComment String?
+  hrOverride        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Loan {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  principal        Float
+  balance          Float
+  monthlyDeduction Float
+  status           LoanStatus
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  loanTypeId       String
+  loanType         LoanType   @relation(fields: [loanTypeId], references: [id])
+}
+
+model LoanType {
+  id              String           @id @default(uuid())
+  name            String           @unique
+  description     String?
+  defaultRate     Float? // default % of salary to deduct or fixed amount
+  calculationType CalculationType
+  maxAmountType   CalculationType?
+  maxAmount       Float? // maximum allowed principal
+  active          Boolean          @default(true)
+
+  loans     Loan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Overtime {
+  id         String   @id @default(uuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  date       DateTime
+  hours      Float
+  approved   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model Timesheet {
+  id                   String           @id @default(uuid())
+  employeeId           String
+  periodStart          DateTime
+  periodEnd            DateTime
+  submittedAt          DateTime?
+  supervisorApprovedAt DateTime?
+  hrApprovedAt         DateTime?
+  entries              TimesheetEntry[]
+
+  rejectionReason String?
+  approvalStatus  ApprovalStatus @default(PENDING)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("TimesheetDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("TimesheetCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model TimesheetEntry {
+  id String @id @default(uuid())
+
+  timesheetId String
+  timesheet   Timesheet          @relation(fields: [timesheetId], references: [id])
+  date        DateTime
+  hours       Float
+  type        TimesheetEntryType
+  createdAt   DateTime           @default(now())
+}
+
+model GeoFence {
+  id           String @id @default(uuid())
+  name         String
+  latitude     Float
+  longitude    Float
+  radiusMeters Float
+}
+
+model ApprovalWorkflow {
+  id       String         @id @default(uuid())
+  name     String
+  module   WorkflowModule
+  isActive Boolean        @default(true)
+
+  levels    ApprovalLevel[]
+  requests  ApprovalRequest[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ApprovalWorkflowDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("ApprovalWorkflowCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PromotionRequest {
+  id              String         @id @default(uuid())
+  employeeId      String
+  currentGradeId  String
+  proposedGradeId String
+  reason          String
+  status          ApprovalStatus @default(PENDING)
+  requestedAt     DateTime       @default(now())
+  approvedAt      DateTime?
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+//Defines what type of workflow this is (e.g., Recruitment Approval).
+
+model BeneficiaryFeedback {
+  id            String            @id @default(uuid())
+  beneficiaryId String
+  beneficiary   Beneficiary       @relation(fields: [beneficiaryId], references: [id])
+  submittedById String?
+  submittedBy   User?             @relation("SubmittedBy", fields: [submittedById], references: [id])
+  feedbackType  FeedbackType
+  category      FeedbackCategory?
+
+  subject  String?
+  message  String
+  priority Priority       @default(MEDIUM)
+  status   FeedbackStatus @default(OPEN)
+
+  assignedToId String?
+  assignedTo   User?     @relation("AssignedTo", fields: [assignedToId], references: [id])
+  response     String?
+  respondedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([beneficiaryId])
+  @@index([status])
+  @@index([feedbackType])
+}
+
+model ApprovalLevel {
+  id         String           @id @default(uuid())
+  workflowId String
+  workflow   ApprovalWorkflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  levelOrder      Int
+  roleId          String
+  role            UserRole @relation(fields: [roleId], references: [id])
+  escalationHours Int?
+  isFinal         Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ApprovalLevelDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("ApprovalLevelCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  @@unique([workflowId, levelOrder])
+}
+
+// Defines each step in the approval chain.
+
+model ApprovalRequest {
+  id         String           @id @default(uuid())
+  workflowId String
+  workflow   ApprovalWorkflow @relation(fields: [workflowId], references: [id])
+
+  referenceId  String // e.g Vacancy ID
+  module       WorkflowModule
+  status       ApprovalStatus @default(PENDING)
+  currentLevel Int            @default(1)
+
+  initiatedById String
+  initiatedBy   User     @relation("ApprovalRequestInitiateddBy", fields: [initiatedById], references: [id])
+  initiatedAt   DateTime @default(now())
+
+  history ApprovalHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("ApprovalRequestDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("ApprovalRequestCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+// Created when a workflow is triggered.
+
+model ApprovalHistory {
+  id                String          @id @default(uuid())
+  approvalRequestId String
+  approvalRequest   ApprovalRequest @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+
+  levelOrder Int
+  actedById  String
+  action     ApprovalStatus
+  comment    String?
+
+  createdAt DateTime @default(now())
+}
+
+model EmployeeAttendanceProfile {
+  id String @id @default(uuid())
+
+  employeeId String   @unique
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  workScheduleId String?
+  workSchedule   WorkSchedule? @relation(fields: [workScheduleId], references: [id])
+
+  shiftType          ShiftType
+  attendancePolicyId String?
+  attendancePolicy   AttendancePolicy? @relation(fields: [attendancePolicyId], references: [id])
+
+  overtimeEligible  Boolean        @default(false)
+  trackingMethod    TrackingMethod
+  geoFencingEnabled Boolean        @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AttendancePolicy {
+  id                     String @id @default(uuid())
+  name                   String @unique
+  gracePeriodMinutes     Int
+  maxLateOccurrences     Int
+  lateToAbsenceThreshold Int
+
+  absencePenaltyEnabled     Boolean
+  overtimeThresholdHours    Float
+  employeeAttendanceProfile EmployeeAttendanceProfile[]
+
+  compOffAccrualEnabled Boolean
+  createdAt             DateTime @default(now())
+}
+
+model BeneficiaryFollowUp {
+  id String @id @default(uuid())
+
+  visitId String
+  visit   BeneficiaryFieldVisit @relation(fields: [visitId], references: [id])
+
+  assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id])
+
+  action      String
+  description String?
+
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  status FollowUpStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+}
+
+model Message {
+  id String @id @default(uuid())
+
+  sender   User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String
+
+  receiver   User   @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId String
+
+  content String
+  type    MessageType @default(DIRECT_MESSAGE)
+
+  // Core notification/message flags
+  isRead Boolean   @default(false)
+  readAt DateTime?
+
+  // Optional: allow users to mark as important / archive / etc.
+  isArchived Boolean @default(false)
+  isStarred  Boolean @default(false)
+
+  // Useful for later filtering / grouping
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+  @@index([isRead, createdAt(sort: Desc)])
+}
+
+model WorkSchedule {
+  id   String @id @default(uuid())
+  name String @unique
+
+  workingDays          String // JSON or "MON,TUE,WED,THU,FRI"
+  dailyWorkingHours    Float
+  breakDurationMinutes Int
+
+  startTime DateTime
+  endTime   DateTime
+
+  flexibleStartWindow Int? // minutes
+  flexibleEndWindow   Int?
+
+  holidayCalendarId String?
+  holidayCalendar   HolidayCalendar? @relation(fields: [holidayCalendarId], references: [id])
+
+  isNightShift              Boolean                     @default(false)
+  shifts                    Shift[]
+  employeeAttendanceProfile EmployeeAttendanceProfile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("WorkScheduleDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedById String?
+
+  createdBy   User?   @relation("WorkScheduleCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+}
+
+model PayrollCalendar {
+  id          String          @id @default(uuid())
+  name        String          @unique
+  description String?
+  frequency   PayFrequency
+  payDay      Int?
+  isActive    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  periods     PayrollPeriod[]
+}
+
+enum CycleStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+}
+
+enum PayrollStatus {
+  DRAFT
+  PROCESSING
+  APPROVED
+  LOCKED
+  PAID
+}
+
+enum ProgramStatus {
+  ACTIVE
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  PROBATION
+  JOB_APPLICANT
+  CONTRACT
+  ON_LEAVE
+  SUSPENDED
+  RESIGNED
+  TERMINATED
+  RETIRED
+  INTERN
+}
+
+enum LoanStatus {
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  CANCELLED
+}
+
+enum RecordStatus {
+  ACTIVE_VERSION
+  PENDING_APPROVAL
+  PREVIOUS_VERSION
+}
+
+enum BeneficiaryType {
+  WIDOW
+  ORPHAN
+  HOUSEHOLD
+}
+
+enum BeneficiaryStatus {
+  ACTIVE
+  SUSPENDED
+  EXITED
+}
+
+enum TrainingStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum RequirementType {
+  HARDWARE
+  SOFTWARE
+  NETWORK
+  SERVER
+}
+
+enum DonorType {
+  INSTITUTIONAL_DONOR
+  INDIVIDUAL_DONOR
+  CORPORATE_DONOR
+  FOUNDATION
+  OTHER
+}
+
+enum CheckStatus {
+  PASSED
+  FAILED
+  PENDING
+}
+
+enum DocGroup {
+  EMPLOYEE
+  ORGANIZATION
+  LEAVEREQUEST
+  BENEFICIARY
+  PROJECT
+  PROGRAM
+  INTERVENTION
+  EMPLOYMENT_POLICIES
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+  STAFF
+  BENEFICIARY
+  USER
+  SUPER_ADMIN
+  APPLICANT
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+}
+
+enum DegreeLevel {
+  ASSOCIATE
+  BACHELORS
+  MASTERS
+  DOCTORAL
+  PROFESSIONAL
+  OTHER
+}
+
+enum CertificateType {
+  PROFESSIONAL
+  TECHNICAL
+  IT_COMPUTER
+  PROJECT_MANAGEMENT
+  BUSINESS
+  FINANCE_ACCOUNTING
+  HEALTHCARE
+  MARKETING
+  HR_HUMAN_RESOURCES
+  DATA_SCIENCE_ANALYTICS
+  CYBERSECURITY
+  LANGUAGE
+  TEACHING_EDUCATION
+  TRADE_VOCATIONAL
+  OTHER
+}
+
+enum CaseStatus {
+  NEW
+  ACTION_PLAN_CREATED
+  ACTIVE
+  MONITORING
+  CLOSED
+  REFERRED_OUT
+  INACTIVE
+  REJECTED
+  OPEN
+  IN_REVIEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum FeedbackType {
+  SUGGESTION
+  APPRECIATION
+  INCIDENT_REPORT
+  GENERAL
+}
+
+enum FeedbackCategory {
+  PAYMENT
+  STAFF_BEHAVIOUR
+  PROGRAM_ACCESS
+  FRAUD
+  DATA_ERROR
+  OTHER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum FeedbackStatus {
+  OPEN
+  IN_REVIEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum CaseType {
+  GENERAL_PROTECTION
+  CHILD_PROTECTION
+  GENDER_BASED_VIOLENCE
+  ECONOMIC_SUPPORT
+  MEDICAL_HEALTH
+  EDUCATION_SUPPORT
+  LEGAL_AID
+  MULTIPURPOSE_CASH
+  OTHER
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FollowUpStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ServiceStatus {
+  REQUESTED
+  REFERRED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+enum DisciplinaryStatus {
+  REPORTED
+  UNDER_INVESTIGATION
+  HEARING_SCHEDULED
+  RESOLVED
+  DISMISSED
+}
+
+enum DisciplinaryAction {
+  VERBAL_WARNING
+  WRITTEN_WARNING
+  FINAL_WARNING
+  SUSPENSION
+  TERMINATION
+  NONE
+}
+
+enum GrievanceType {
+  GRIEVANCE
+  COMPLAINT
+}
+
+enum GrievanceStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  IN_MEDIATION
+  RESOLVED
+  REJECTED
+}
+
+enum AssetStatus {
+  AVAILABLE
+  ASSIGNED
+  UNDER_MAINTENANCE
+  LOST
+  DISPOSED
+  DAMAGED
+  RETIRED
+}
+
+enum DepreciationMethod {
+  STRAIGHT_LINE
+  DECLINING_BALANCE
+  SUM_OF_YEARS_DIGITS
+  UNITS_OF_PRODUCTION
+  NONE
+}
+
+enum PaymentMethod {
+  DIRECT_DEPOSIT
+  Check
+  CASH
+  OTHER
+}
+
+enum AssignmentType {
+  EMPLOYEE
+  PROJECT
+  DEPARTMENT
+  ORGANIZATION
+  OTHER
+}
+
+enum AssetDisposalMethod {
+  SOLD
+  SCRAPPED
+  DONATED
+  LOST
+  OTHER
+}
+
+enum WorkflowModule {
+  RECRUITMENT
+  LEAVE_REQUEST
+  FINANCE
+  PROCUREMENT
+  PERFORMANCE
+  ASSET_REQUEST
+  COMPLAINT_SUBMISSION
+  TIMESHEET
+  OVERTIME
+  BENEFICIARY_ONBOARDING
+  EQUIPMENT_REQUEST
+  EXPENSE_CLAIM
+}
+
+enum ApprovalStatus {
+  PENDING
+  CANCELLED
+  APPROVED
+  REJECTED
+  UNDER_REVIEW
+  ESCALATED
+}
+
+enum PayFrequency {
+  DAILY
+  WEEKLY
+  BI_WEEKLY
+  SEMI_MONTHLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  TAKEN // after leave is actually used (can be auto-set on end date)
+
+  UNDER_REVIEW
+  COMPLETED
+}
+
+enum AccrualFrequency {
+  ANNUALLY
+  MONTHLY
+  WEEKLY
+  NONE
+}
+
+enum LeaveUnit {
+  DAYS
+  HOURS
+}
+
+enum ShiftType {
+  FIXED
+  ROTATIONAL
+  FLEXIBLE
+}
+
+enum TrackingMethod {
+  BIOMETRIC
+  WEB
+  MOBILE
+  RFID
+}
+
+enum CaptureMethod {
+  DEVICE
+  MOBILE
+  WEB
+  MANUAL
+}
+
+enum TimestampSource {
+  SERVER
+  DEVICE
+  GPS
+}
+
+enum OvertimeType {
+  WEEKDAY
+  WEEKEND
+  HOLIDAY
+}
+
+enum ExceptionType {
+  MISSED_PUNCH
+  MANUAL_CORRECTION
+  REGULARIZATION
+}
+
+enum SyncStatus {
+  SYNCED
+  PENDING
+  FAILED
+}
+
+enum InterventionStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  SCHEDULED
+  DISBURSED
+  PARTIALLY_DISBURSED
+  FAILED
+  CANCELLED
+  CLOSED
+}
+
+enum IndicatorType {
+  OUTPUT
+  OUTCOME
+  IMPACT
+}
+
+enum RequestType {
+  EQUIPMENT
+  LEAVE
+  SALARY_ADVANCE
+  TIMESHEET
+  COMPLAINT
+  REMOTE_WORK
+  OVERTIME
+  TRAINING
+  OTHER
+  CASH_SUPPORT
+  FOOD_ASSISTANCE
+  MEDICAL_SUPPORT
+  EDUCATION_SUPPORT
+  SHELTER_SUPPORT
+  LIVELIHOOD_SUPPORT
+}
+
+enum MessageType {
+  DIRECT_MESSAGE
+  FRIEND_REQUEST
+  GROUP_INVITE
+  SYSTEM_NOTIFICATION
+  MENTION
+  LIKE
+  COMMENT
+  FOLLOW
+}
+
+enum TimesheetEntryType {
+  REGULAR
+  OVERTIME
+  WEEKEND
+  HOLIDAY
+}
+
+enum AllowanceType {
+  BONUS
+  OVERTIME
+  COMMISSION
+  ALLOWANCE
+}
+
+enum AppraisalStatus {
+  SELF_REVIEW
+  MANAGER_REVIEW
+  HR_REVIEW
+  COMPLETED
+}
+
+/// Deduction Type Enum
+enum DeductionType {
+  EMPLOYEE
+  EMPLOYER
+  BOTH
+}
+
+/// Calculation Type Enum
+enum CalculationType {
+  FIXED
+  PERCENTAGE
+  BRACKETED
+}
+
+enum BaseComponent {
+  BASIC
+  GROSS
+  ALLOWANCES
+  TOTAL_PAYROLL
+}
+
+enum VisitType {
+  ROUTINE
+  MONITORING
+  EMERGENCY
+  ASSESSMENT
+  FOLLOW_UP
+}
+
+enum VisitStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  MISSED
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  TAKEN // after leave is actually used (can be auto-set on end date)
+}
